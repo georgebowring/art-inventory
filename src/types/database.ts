@@ -3,10 +3,17 @@
 export type ArtworkStatus =
   | 'available'
   | 'reserved'
+  | 'consigned'
   | 'on_loan'
   | 'in_transit'
   | 'sold'
-  | 'archived';
+  | 'archived'
+  | 'pending_purchase'
+  | 'participating'
+  | 'in_wallet'
+  | 'in_fabrication'
+  | 'cancelled'
+  | 'for_repair';
 
 export type TransactionType =
   | 'purchase'
@@ -17,6 +24,18 @@ export type TransactionType =
   | 'auction'
   | 'return'
   | 'adjustment';
+
+export type ExpenseCategory =
+  | 'shipping'
+  | 'customs'
+  | 'insurance'
+  | 'framing'
+  | 'restoration'
+  | 'storage'
+  | 'photography'
+  | 'commission'
+  | 'tax'
+  | 'other';
 
 export type CurrencyCode =
   | 'USD'
@@ -65,6 +84,7 @@ export type DocumentType =
   | 'export_license'
   | 'import_license'
   | 'photo'
+  | 'factsheet'
   | 'other';
 
 // Table types
@@ -111,6 +131,7 @@ export interface Location {
   state_province: string | null;
   postal_code: string | null;
   country: string;
+  location_type: string | null;
   is_default: boolean;
   notes: string | null;
   created_at: string;
@@ -136,6 +157,7 @@ export interface Artwork {
   inventory_number: string | null;
   title: string;
   artist_id: string | null;
+  artist_ref: string | null;
   year_created: string | null;
   medium: string | null;
   dimensions: string | null;
@@ -147,16 +169,28 @@ export interface Artwork {
   status: ArtworkStatus;
   location_id: string | null;
   location_detail: string | null;
+  ownership_pct: number;
+  ownership_notes: string | null;
   purchase_price: number | null;
   purchase_currency: CurrencyCode;
   purchase_date: string | null;
+  acquired_from: string | null;
   current_value: number | null;
   current_value_currency: CurrencyCode;
   insurance_value: number | null;
   insurance_currency: CurrencyCode;
+  consignment_price: number | null;
+  consignment_currency: CurrencyCode;
+  total_expenses: number;
+  expenses_currency: CurrencyCode;
+  cost_basis: number | null;
+  cost_basis_currency: CurrencyCode;
   provenance: string | null;
+  exhibition_history: string | null;
   description: string | null;
   notes: string | null;
+  internal_notes: string | null;
+  remarks: string | null;
   condition: ConditionRating | null;
   condition_notes: string | null;
   category: string | null;
@@ -168,6 +202,7 @@ export interface Artwork {
   is_signed: boolean;
   is_authenticated: boolean;
   catalogued_by: string | null;
+  airtable_record_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -186,6 +221,7 @@ export interface ArtworkImage {
   is_primary: boolean;
   sort_order: number;
   caption: string | null;
+  original_url: string | null;
   created_at: string;
 }
 
@@ -222,7 +258,27 @@ export interface Transaction {
   notes: string | null;
   consignment_start: string | null;
   consignment_end: string | null;
+  consignment_price: number | null;
+  funds_received_date: string | null;
+  profit_amount: number | null;
+  profit_currency: CurrencyCode;
   created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Expense {
+  id: string;
+  tenant_id: string;
+  artwork_id: string;
+  category: ExpenseCategory;
+  description: string | null;
+  amount: number;
+  currency: CurrencyCode;
+  date: string;
+  vendor: string | null;
+  receipt_url: string | null;
+  notes: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -241,6 +297,7 @@ export interface Document {
   size_bytes: number | null;
   notes: string | null;
   uploaded_by: string | null;
+  original_url: string | null;
   created_at: string;
 }
 
